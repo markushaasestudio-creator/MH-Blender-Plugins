@@ -37,7 +37,13 @@ def _request_json(endpoint: str, path: str, payload: dict[str, Any] | None = Non
     except HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace") if exc.fp else str(exc)
         raise OllamaError(f"Ollama HTTP {exc.code}: {detail[:1000]}") from exc
-    except (URLError, TimeoutError, OSError) as exc:
+    except TimeoutError as exc:
+        raise OllamaError(
+            f"Ollama request timed out after {timeout}s while waiting for the model response. "
+            "The endpoint was reached, but inference did not finish in time. "
+            "Reduce the AI batch/contact-sheet size or increase the timeout."
+        ) from exc
+    except (URLError, OSError) as exc:
         raise OllamaError(f"Could not reach Ollama at {normalize_endpoint(endpoint)}: {exc}") from exc
     try:
         return json.loads(raw) if raw else {}
@@ -102,6 +108,9 @@ def chat_structured(
     system: str = "",
     timeout: int = 180,
     allow_remote: bool = False,
+    think: bool = False,
+    keep_alive: str = "15m",
+    num_predict: int = 1536,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     endpoint = normalize_endpoint(endpoint)
     if not allow_remote and not is_local_endpoint(endpoint):
@@ -125,8 +134,13 @@ def chat_structured(
         "model": model,
         "messages": messages,
         "stream": False,
+        "think": bool(think),
+        "keep_alive": keep_alive,
         "format": schema,
-        "options": {"temperature": 0},
+        "options": {
+            "temperature": 0,
+            "num_predict": max(256, int(num_predict)),
+        },
     }
     response = _request_json(endpoint, "/api/chat", request_payload, timeout=timeout)
     content = str(response.get("message", {}).get("content", ""))
