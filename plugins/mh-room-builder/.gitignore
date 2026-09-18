@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv*/
+venv/
+
+# Build artifacts
+dist/
+build/
+*.zip
+
+# Blender / IDE
+*.blend1
+*.blend2
+.vscode/
+.idea/
+
+# Local analyzer/runtime state
+MH_Room_Builder_Dataset/
+analysis_output/
+analysis_cache/
+*.log
+
+# Customer/project material - never commit by default
+customer_data/
+customer_plans/
+customer_renderings/
+real_tests/
+*.dwg
+*.dxf
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
