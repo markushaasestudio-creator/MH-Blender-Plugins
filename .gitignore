@@ -1,0 +1,36 @@
+# Python / Blender build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv*/
+venv/
+dist/
+build/
+*.zip
+*.blend1
+*.blend2
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Studio-local runtime / datasets
+MH_Room_Builder_Dataset/
+analysis_output/
+analysis_cache/
+*.log
+
+# Customer/private project material
+customer_data/
+customer_plans/
+customer_renderings/
+real_tests/
+*.dwg
+*.dxf
+
+# Ollama / model payloads
+models/
+*.gguf
